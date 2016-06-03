@@ -5,7 +5,7 @@ var NUMBER_OF_TOURNAMENTS = 50,
     CHALLENGE = 2.0;
 
 var tournament = require('./tournament')
-    , MachinePoker = require('machine-poker')
+    , MachinePoker = require('../machine-poker')
     , ChallBot = require('../players/challengerBot')
     , challenger = MachinePoker.seats.JsLocal.create(ChallBot)
     , async = require('async')

@@ -1,0 +1,64 @@
+{
+  "name": "machine-poker",
+  "version": "0.5.1",
+  "description": "The library for Machine Poker Competitions",
+  "keywords": [
+    "competition",
+    "poker"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mdp/MachinePoker.git"
+  },
+  "author": {
+    "name": "Mark Percival",
+    "email": "m@mdp.im",
+    "url": "http://markpercival.us"
+  },
+  "scripts": {
+    "test": "rm -rf lib && coffee --compile -o lib/ src/ && mocha --no-colors --compilers coffee:coffee-script test/*_test.coffee",
+    "prepublish": "rm -rf lib && coffee --compile -o lib/ src/"
+  },
+  "devDependencies": {
+    "mocha": ">=0.0.0",
+    "coffee-script": ">=1.4.0"
+  },
+  "dependencies": {
+    "binions": ">=0.6.4",
+    "hoyle": ">=0.2.0",
+    "async": ">=0.1.22",
+    "request": ">=2.11.4",
+    "optimist": ">=0.3.5"
+  },
+  "main": "./lib/index.js",
+  "engines": {
+    "node": "0.8.x"
+  },
+  "license": "MIT",
+  "readme": "[![Build Status](https://secure.travis-ci.org/mdp/MachinePoker.png)](http://travis-ci.org/mdp/MachinePoker)\n\n![Machine\nPoker](https://s3.amazonaws.com/img.mdp.im/MachinePokerLogo.png)\n# Machine Poker\n\nMachine Poker is a libray which allows you go build poker bots\nand have them compete against each other in tournaments.\n\nCurrently this supports bots written in Javascript running locally,\nor bots that play remotely via HTTP and conform to the MachinePoker API\n\n## Getting started\n\n### Requirements\n\n- NodeJS >= 0.10.x\n- A basic understanding of javascript\n\n#### Dependencies\n\n- [Hoyle](https://github.com/mdp/hoyle) - Poker hand library\n- [Binions](https://github.com/mdp/binions) - Poker table library\n- Request\n- Async\n- Optimist\n\n### Installation\n\n#### Via NPM\n\n    npm install machine-poker\n\n#### Local\n\n    git clone git://github.com/mdp/MachinePoker.git\n    cd MachinePoker\n    npm install\n\n### Build your bot\n\nCheck [this guide on the wiki](MachinePoker/wiki) to start building your own bot\n\n### Cofiguring a new game\n\nNew matches are built using the Machine Poker API\n\n    var MachinePoker = require('machine-poker');\n        , LocalSeat = MachinePoker.seats.JsLocal\n        , RemoteSeat = MachinePoker.seats.Remote\n        , CallBot = require('./examples/bots/callBot')\n        , RandBot = require('./examples/bots/randBot')\n        , FoldBot = require('./examples/bots/foldBot')\n        , narrator = MachinePoker.observers.narrator\n        , fileLogger = MachinePoker.observers.fileLogger('./examples/results.json');\n\n    var table = MachinePoker.create({\n      maxRounds: 100\n    });\n\n    // Source be found at: https://github.com/mdp/RandBot\n    var remotePlayerUrl = \"http://randbot.herokuapp.com/randBot\";\n\n    var remotePlayer = RemoteSeat.create(remotePlayerUrl);\n    remotePlayer.on('ready', function () {\n      var players = [\n        remotePlayer\n        , LocalSeat.create(CallBot)\n        , LocalSeat.create(FoldBot)\n        , LocalSeat.create(RandBot)\n        , LocalSeat.create(RandBot)\n      ];\n      table.addPlayers(players);\n      table.on('tournamentClosed', function () { process.exit() } );\n      table.start();\n    });\n\n    // Add some observers\n    table.addObserver(narrator);\n    table.addObserver(fileLogger);\n\n### Updating the repo\n\nThe sample bots will evolve over the coming weeks in order to give you\nsome better opponents. You can just update the repo to keep up to date.\n\n    git pull origin master\n\n### Todo\n\n- Fix wiki\n\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/mdp/MachinePoker/issues"
+  },
+  "_id": "machine-poker@0.5.1",
+  "dist": {
+    "shasum": "c40c15b8768991e74bab0b4a25f7ec4a4d30459c",
+    "tarball": "https://registry.npmjs.org/machine-poker/-/machine-poker-0.5.1.tgz"
+  },
+  "_from": "machine-poker@>=0.5.1 <0.6.0",
+  "_npmVersion": "1.3.11",
+  "_npmUser": {
+    "name": "mdp",
+    "email": "m@mdp.im"
+  },
+  "maintainers": [
+    {
+      "name": "mdp",
+      "email": "m@mdp.im"
+    }
+  ],
+  "directories": {},
+  "_shasum": "c40c15b8768991e74bab0b4a25f7ec4a4d30459c",
+  "_resolved": "https://registry.npmjs.org/machine-poker/-/machine-poker-0.5.1.tgz",
+  "homepage": "https://github.com/mdp/MachinePoker#readme"
+}

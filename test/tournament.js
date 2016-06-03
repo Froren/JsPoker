@@ -1,4 +1,4 @@
-var MachinePoker = require('machine-poker')
+var MachinePoker = require('../machine-poker')
     , SneakyCharlie = require('../players/sneakyCharlieBot')
     , SmartBot = require('../players/smartBot')
     , MercBot = require('../players/mercBot')

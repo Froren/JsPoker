@@ -1,5 +1,5 @@
 var tournament = require('./test/tournament')
-    , MachinePoker = require('machine-poker')
+    , MachinePoker = require('./machine-poker')
     , ChallBot = require('./players/challengerBot')
     , challenger = MachinePoker.seats.JsLocal.create(ChallBot);
 

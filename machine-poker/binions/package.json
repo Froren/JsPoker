@@ -1,0 +1,64 @@
+{
+  "name": "binions",
+  "version": "0.6.5",
+  "description": "A Javascript Poker game engine",
+  "keywords": [
+    "poker tournament",
+    "pokerbot",
+    "poker",
+    "poker engine",
+    "texas hold'em"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mdp/binions.git"
+  },
+  "author": {
+    "name": "Mark Percival",
+    "email": "mark@markpercival.us",
+    "url": "http://markpercival.us"
+  },
+  "scripts": {
+    "test": "mocha --no-colors --compilers coffee:coffee-script test/*_test.coffee",
+    "prepublish": "rm -rf lib && coffee --compile -o lib/ src/"
+  },
+  "dependencies": {
+    "hoyle": ">=0.2.1"
+  },
+  "devDependencies": {
+    "coffee-script": "1.3.x",
+    "should": ">=1.1.0",
+    "mocha": ">=1.4.2"
+  },
+  "main": "./lib/index.js",
+  "engines": {
+    "node": ">=0.8.x"
+  },
+  "license": "MIT",
+  "readme": "[![Build\nStatus](https://secure.travis-ci.org/mdp/binions.png)](http://travis-ci.org/mdp/binions)\n\n![Binions](http://s3.amazonaws.com/img.mdp.im/binions_cut-20120918-200256.jpg)\n\n# Binions\n## A javascript poker tournament/game engine for bots\n\n## Running a game\n\n    {Game} = require 'binions'\n    {Player} = require 'binions'\n    {NoLimit} = require 'binions'\n\n    describe \"Basic game\", ->\n      beforeEach () ->\n        @noLimit = new NoLimit(10,20)\n        @players = []\n        chips = 1000\n        misterCallsAll =\n          update: (game) ->\n            game.betting.call\n        for n in [0..6]\n          @players.push new Player(misterCallsAll, chips, n)\n\n      it \"should play the game to completion with run()\", (done) ->\n        game = new Game(@players, @noLimit)\n        game.run()\n        game.on 'complete', ->\n          assert.ok game.winners.length > 0\n          done()\n\n## Todo\n\n### Tests\n\n- More tests on bet handlers(NoLimit)\n\n### Build more example players\n\n- Players that only play certain pocket cards (eg, Kings or higer)\n- Tight players\n- Players that occasionally go all in\n\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/mdp/binions/issues"
+  },
+  "_id": "binions@0.6.5",
+  "dist": {
+    "shasum": "df56a632a9d2403146298f38acdbc8324cfa21c9",
+    "tarball": "https://registry.npmjs.org/binions/-/binions-0.6.5.tgz"
+  },
+  "_from": "binions@>=0.6.4",
+  "_npmVersion": "1.2.30",
+  "_npmUser": {
+    "name": "mdp",
+    "email": "m@mdp.im"
+  },
+  "maintainers": [
+    {
+      "name": "mdp",
+      "email": "m@mdp.im"
+    }
+  ],
+  "directories": {},
+  "_shasum": "df56a632a9d2403146298f38acdbc8324cfa21c9",
+  "_resolved": "https://registry.npmjs.org/binions/-/binions-0.6.5.tgz",
+  "homepage": "https://github.com/mdp/binions#readme"
+}

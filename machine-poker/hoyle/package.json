@@ -1,0 +1,56 @@
+{
+  "name": "hoyle",
+  "version": "0.2.2",
+  "description": "Javascript Poker Hand Evaluator",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script test/*_test.coffee",
+    "prepublish": "rm -rf lib && coffee --compile -o lib/ src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mdp/hoyle.git"
+  },
+  "keywords": [
+    "poker",
+    "poker-hand",
+    "poker-hands"
+  ],
+  "devDependencies": {
+    "coffee-script": "1.3.x",
+    "should": ">=1.1.0",
+    "mocha": ">=1.4.2"
+  },
+  "author": {
+    "name": "Mark Percival",
+    "email": "mark@markpercival.us",
+    "url": "http://markpercival.us"
+  },
+  "license": "MIT",
+  "readme": "[![Build\nStatus](https://secure.travis-ci.org/mdp/hoyle.png)](http://travis-ci.org/mdp/hoyle)\n\n# Hoyle\n## A Javascript poker hand evaluator (Written in Coffeescript)\n\n### Example\n\n    Hand = require('hoyle').Hand\n\n    describe \"Finding winning hands\", ->\n      it \"should detect the winning hand from a list\", ->\n        gary = Hand.make([\"2s\",\"3s\",\"4h\",\"5c\",\"As\",\"Ts\",\"8d\"])\n        mike = Hand.make([\"5s\",\"Ts\",\"3h\",\"Ac\",\"2s\",\"Ts\",\"8d\"])\n        steve = Hand.make([\"5s\",\"5h\",\"3s\",\"3c\",\"2s\",\"Ts\",\"3d\"])\n        winners = Hand.pickWinners([h1,h2,h3])\n        winners.length.should.equal 1\n        winners[0].should.equal steve\n        winners[0].name.should.equal \"Full house\"\n\n### Install\n\n    npm install hoyle\n\n### Install and use locally\n\n    git clone git://github.com/mdp/hoyle.git\n    cd hoyle\n    npm install\n    npm run-script prepublish\n    npm link\n\n### Testing\n\n    npm install\n    npm test\n\n### Notes\n\n- Handles making the best poker hand out of 5-7 cards\n- Written for code clarity, not speed (But still plenty fast for many\nuses) See\n[\"The Great Poker Hand Evaluator\nRoundup\"](http://www.codingthewheel.com/archives/poker-hand-evaluator-roundup)\nfor a deeper dive into speedy poker hand evaluators.\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/mdp/hoyle/issues"
+  },
+  "_id": "hoyle@0.2.2",
+  "dist": {
+    "shasum": "8676a8d037c02225cfe8a22495044bc5490a739c",
+    "tarball": "https://registry.npmjs.org/hoyle/-/hoyle-0.2.2.tgz"
+  },
+  "_from": "hoyle@>=0.2.0",
+  "_npmVersion": "1.2.30",
+  "_npmUser": {
+    "name": "mdp",
+    "email": "m@mdp.im"
+  },
+  "maintainers": [
+    {
+      "name": "mdp",
+      "email": "m@mdp.im"
+    }
+  ],
+  "directories": {},
+  "_shasum": "8676a8d037c02225cfe8a22495044bc5490a739c",
+  "_resolved": "https://registry.npmjs.org/hoyle/-/hoyle-0.2.2.tgz",
+  "homepage": "https://github.com/mdp/hoyle#readme"
+}
