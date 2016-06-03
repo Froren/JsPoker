@@ -1,0 +1,277 @@
+<html>
+<script src="/public/poker.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+
+  var _playerBusted = false;
+  var ENABLE_USER_CARD_IMAGES = false;
+
+  socket.on('message', function(data) {
+  	render(data);
+  });
+
+  socket.on('eliminated', function(player) {
+    _playerBusted = true;
+    alert(player + " has been eliminated from play. The game information will be shown in the console.");
+  })
+
+  socket.on('narration', function(data) {
+    console.log(data);
+
+    if (!_playerBusted) { //Once you bust, the flood of game information crashes chrome
+      var output = data.replace(/\n/g, "<br>");
+
+      function injectCardImagesInText(text, startIndex, endIndex) {
+        //Text is like "6c 3d 4s Qd Td ", or "3d Qd "
+        var cardString = text.slice(startIndex, endIndex).trim();
+
+        var firstHalfOfText = text.slice(0, startIndex);
+        var secondHalfOfText = text.slice(endIndex, text.length);
+
+        if (cardString !== "") {
+          var cardsArray = cardString.split(" ");
+          cardString = "";
+          cardsArray.forEach(function(card) {
+            cardString += convertStringToImg(card);
+          });
+        }
+
+        return firstHalfOfText + cardString + secondHalfOfText;
+      }
+
+      //Text matching to replace community cards with html
+      var boardSearchString = "Board was: ";
+      var boardText = output.indexOf(boardSearchString);
+      if (boardText !== -1) {
+        var cardStringStartIndex = boardText + boardSearchString.length;
+
+        output = injectCardImagesInText(output, cardStringStartIndex, output.indexOf("<br>", boardText));
+      }
+
+      //Text matching to replace user cards with html, looks kinda bad
+      while (ENABLE_USER_CARD_IMAGES && output.search(/ had [^<"]/) !== -1) {
+        var index = output.search(/ had [^<"]/);
+
+        //5 characters after the index is the card string, goes on for 5 characters
+        var cardStringStartIndex = index + 5;
+        var cardStringEndIndex = cardStringStartIndex + 5;
+
+        output = injectCardImagesInText(output, cardStringStartIndex, cardStringEndIndex);
+      }
+
+      document.getElementById('playLog').innerHTML += output + "<br>";
+    }
+  });
+
+  function action(input) {
+  	socket.emit('action', input);
+
+    //clear the last section of logs
+    document.getElementById('playLog').innerHTML = '';
+  }
+
+  function raise() {
+    var amount = document.getElementById('raiseAmount').value;
+    amount = parseInt(amount);
+
+    if (typeof amount === 'number')
+      action(amount);
+    else
+      action("raise");
+  }
+
+  function start() {
+    socket.emit('action');
+
+    //Remove the start button
+    var startButton = document.getElementById('start');
+    startButton.parentNode.removeChild(startButton);
+
+    //Enable the remaining buttons
+    var playButtons = document.getElementsByClassName("playButtons");
+    for (var i = 0; i < playButtons.length; i++) {
+      playButtons[i].disabled = false;
+    }
+  }
+
+  function convertStringToImg(cardString, size) {
+
+  	if (!size)
+  		size = 40;
+
+  	cardString = cardString.toUpperCase();
+
+  	if (cardString === 'X')
+  		return Poker.getBackImage(size, '#90928C', '#535550').outerHTML;
+  	else {
+  		var value = cardString.charAt(0);
+  		var suit = cardString.charAt(1);
+
+  		var outputV, outputS;
+
+  		if (value === '1')
+  			outputV = 'A';
+  		else if (value === 'T')
+  			outputV = '10';
+  		else
+  			outputV = value;
+
+  		switch (suit) {
+  			case 'D':
+  				outputS = 'diamonds';
+  				break;
+  			case 'C':
+  				outputS = 'clubs';
+  				break;
+  			case 'H':
+  				outputS = 'hearts';
+  				break;
+  			case 'S':
+  				outputS = 'spades';
+  				break;
+  		}
+
+  		return Poker.getCardImage(size, outputS, outputV).outerHTML;
+  	}
+  }
+
+  function convertArrayToCards(array) {
+    var cardString = "";
+
+    array.forEach(function (card) {
+      cardString += convertStringToImg(card.toUpperCase());
+    });
+
+    return cardString ;
+  }
+
+  function render(data) {
+    var data = JSON.parse(data);
+
+    renderInfo({
+        hand: data.hand,
+        state: data.state,
+        community: data.community
+    });
+
+    renderSelf({
+      name: data.self.name,
+      blind: data.self.blind,
+      ante: data.self.ante,
+      wagered: data.self.wagered,
+      chips: data.self.chips,
+      cards: data.self.cards,
+      betting: data.betting
+    });
+
+    renderPlayers({
+      state: data.state,
+      players: data.players
+    });
+  }
+
+  function renderInfo(infoData) {
+    document.getElementById('hand').innerHTML = infoData.hand;
+    document.getElementById('state').innerHTML = infoData.state;
+    document.getElementById('community').innerHTML = convertArrayToCards(infoData.community);
+  }
+
+  function renderSelf(selfData) {
+    document.getElementById('name').innerHTML = selfData.name;
+
+    if (selfData.betting) {
+      document.getElementById('bettingOptions').innerHTML =
+      "Call: " + selfData.betting.call + " Raise: " + selfData.betting.raise + " Can Raise: " + selfData.betting.canRaise;
+
+      document.getElementById('raiseAmount').value = selfData.betting.raise;
+
+      //Disable the raise button if we can't raise
+      document.getElementById('raiseButton').disabled = !selfData.betting.canRaise;
+      document.getElementById('raiseAmount').disabled = !selfData.betting.canRaise;
+    } else {
+      document.getElementById('bettingOptions').innerHTML = "-";
+    }
+
+    document.getElementById('chips').innerHTML = selfData.chips;
+    document.getElementById('blind').innerHTML = selfData.blind;
+    document.getElementById('ante').innerHTML = selfData.ante;
+    document.getElementById('wagered').innerHTML = selfData.wagered;
+    document.getElementById('selfCards').innerHTML = convertArrayToCards(selfData.cards);
+  }
+
+  function renderPlayers(playersData) {
+    var playersNode = document.getElementById('players');
+
+    //Clear the div
+    while (playersNode.firstChild) { playersNode.removeChild(playersNode.firstChild); }
+
+    playersData.players.forEach(function (player) {
+      playersNode.appendChild(renderPlayer(player, playersData.state));
+    });
+  }
+
+  function renderPlayer(playerData, state) {
+
+    var actionString;
+    if (playerData.actions[state]) {
+      playerData.actions[state].forEach(function (actionObject) {
+          var action = actionObject.type + (actionObject.bet ? " " + actionObject.bet : "");
+
+          if (!actionString)
+            actionString = action;
+          else
+            actionString += ", " + action;
+      });
+    } else {
+      actionString = "-";
+    }
+
+    var playerDiv = document.createElement("div");
+    playerDiv.style.marginRight = "50px";
+
+    playerDiv.appendChild(document.createTextNode(playerData.name));
+    playerDiv.appendChild(document.createElement("br"));
+    playerDiv.appendChild(document.createTextNode("Chips " + playerData.chips));
+    playerDiv.appendChild(document.createElement("br"));
+    playerDiv.appendChild(document.createTextNode("Blind " + playerData.blind));
+    playerDiv.appendChild(document.createElement("br"));
+    playerDiv.appendChild(document.createTextNode("Ante " + playerData.ante));
+    playerDiv.appendChild(document.createElement("br"));
+    playerDiv.appendChild(document.createTextNode("Wagered " + playerData.wagered));
+    playerDiv.appendChild(document.createElement("br"));
+    playerDiv.appendChild(document.createTextNode("Actions: " + actionString));
+    playerDiv.appendChild(document.createElement("br"));
+
+    return playerDiv;
+  }
+</script>
+<button id='start' onclick='start()'>Start</button>
+<button class='playButtons' onclick='action("call")' disabled>Call</button>
+<button id='raiseButton' class='playButtons' onclick='raise()' disabled>Raise:</button>
+<input id='raiseAmount' class='playButtons' type="text">
+<button class='playButtons' onclick='action("fold")' disabled>Check/Fold</button>
+
+<div id='info'>
+  Hand: <span id='hand'></span><br>
+  State: <span id='state'></span><br>
+  <div id='community'></div><br>
+</div><br>
+
+<div id='self'>
+  <span id='name'></span><br>
+  Betting Options: <span id='bettingOptions'></span><br>
+  Chips <span id='chips'></span><br>
+  Blind <span id='blind'></span><br>
+  Ante <span id='ante'></span><br>
+  Wagered <span id='wagered'></span><br>
+  <div id='selfCards'></div><br>
+</div><br>
+
+<div id='players' style="display:flex;flex-direction:row;">
+</div><br><br><br>
+
+<div id='playLog'>
+</div>
+
+</html>

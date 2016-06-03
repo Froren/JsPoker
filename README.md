@@ -6,7 +6,7 @@ A fork of the [mdp/JsPoker](https://github.com/mdp/JsPoker) project that crudely
 
     git clone
     npm install
-    node play
+    node play/npm start
   *navigate to localhost:3000*
 
 Hopefully the game is self-explanatory from that point.

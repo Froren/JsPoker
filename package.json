@@ -1,25 +1,24 @@
 {
-  "name": "JsPoker",
+  "name": "JsPokerLive",
   "version": "0.0.1",
-  "description": "A javascript based poker tournament",
-  "main": "index.js",
+  "description": "",
+  "main": "play.js",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha"
+    "start": "node play.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mdp/JsPoker"
+    "url": "https://github.com/Froren/JsPokerLive"
   },
   "keywords": [
-    "poker",
-    "yahoo"
+    "poker"
   ],
-  "author": "Mark Percival <m@mdp.im> (@mdp)",
+  "author": "Froren",
   "license": "MIT",
   "dependencies": {
-    "async": "~0.2.9"
-  },
-  "devDependencies": {
-    "mocha": "~1.14.0"
+    "async": "~0.2.9",
+    "express": "^4.13.4",
+    "hbs": "^4.0.0",
+    "socket.io": "^1.4.6"
   }
 }

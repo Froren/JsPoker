@@ -16,7 +16,8 @@
 
   exports.seats = {
     JsLocal: require('./seats/js_local'),
-    Remote: require('./seats/remote')
+    Remote: require('./seats/remote'),
+    Live: require('./seats/live')
   };
 
   exports.betting = binions.betting;
@@ -24,7 +25,8 @@
   exports.observers = {
     fileLogger: require('./observers/file_logger'),
     logger: require('./observers/logger'),
-    narrator: require('./observers/narrator')
+    narrator: require('./observers/narrator'),
+    webNarrator: require('./observers/webNarrator')
   };
 
   exports.create = function(betting) {
