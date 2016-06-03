@@ -17,6 +17,10 @@ I've made sweeping changes throughout the different modules to achieve this goal
 
 You can look at the history to get an idea of what I did, feel free to fork/improve/experiment with it.
 
+### Issues
+
+- Blinds double incorrectly, see commit message
+
 ## Projects Used
 
 [JSPoker](https://github.com/mdp/JsPoker), and related projects (MachinePoker, Binions, Hoyle)

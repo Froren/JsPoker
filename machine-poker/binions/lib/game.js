@@ -96,7 +96,7 @@
     };
 
     Game.prototype.takeBlinds = function() {
-      return new this.Betting(this.players, this.state).takeBlinds();
+      return new this.Betting(this.players, this.state).takeBlinds(this.hand);
     };
 
     Game.prototype.deal = function() {

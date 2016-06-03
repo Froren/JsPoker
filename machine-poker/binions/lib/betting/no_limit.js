@@ -2,7 +2,7 @@
 (function() {
   var NoLimit;
 
-  NoLimit = module.exports = function(small, big) {
+  NoLimit = module.exports = function(small, big, doublingRounds) {
     var Analysis, bigBlind, smallBlind;
     smallBlind = Math.floor(small / 2);
     bigBlind = small;
@@ -16,6 +16,7 @@
         this.offset = 0;
         this.minToCall = 0;
         this.minToRaise = 0;
+        this.doublingRounds = (doublingRounds ? doublingRounds : false);
         if (players.length === 2 && this.state === 'pre-flop') {
           this.offset = 1;
         } else if (this.state === 'pre-flop') {
@@ -70,11 +71,21 @@
         return Math.max.apply(Math, wagers);
       };
 
-      Analysis.prototype.blinds = function() {
+      Analysis.prototype.blinds = function(currentRound) {
+
+        var sBlind = smallBlind;
+        var bBlind = bigBlind;
+
+        if (currentRound && this.doublingRounds) {
+          var multiplier = Math.floor(currentRound/this.doublingRounds);
+          sBlind = sBlind * Math.pow(2, multiplier);
+          bBlind = bBlind * Math.pow(2, multiplier);
+        }
+
         if (this.players.length > 2) {
-          return [smallBlind, bigBlind];
+          return [sBlind, bBlind];
         } else {
-          return [bigBlind, smallBlind];
+          return [bBlind, sBlind];
         }
       };
 
@@ -159,9 +170,9 @@
         return this.analyze();
       };
 
-      Analysis.prototype.takeBlinds = function() {
+      Analysis.prototype.takeBlinds = function(currentRound) {
         var blind, i, _i, _len, _ref;
-        _ref = this.blinds();
+        _ref = this.blinds(currentRound);
         for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
           blind = _ref[i];
           this.players[i].takeBlind(blind);

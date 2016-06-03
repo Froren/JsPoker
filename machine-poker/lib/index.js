@@ -43,7 +43,7 @@
       }
       this.chips = this.opts.chips || 1000;
       this.maxRounds = this.opts.maxRounds || 100;
-      this.betting = this.opts.betting || binions.betting.noLimit(10, 20);
+      this.betting = this.opts.betting || binions.betting.noLimit(10, 20, 15);
       this.observers = [];
       this.players = [];
       this.currentRound = 1;
