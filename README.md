@@ -13,7 +13,7 @@ Hopefully the game is self-explanatory from that point.
 
 ## What is this project?
 
-I've made sweeping changes throughout the different modules to achieve this goal, so I've compiled **JSPoker** into a single repository made my changes on top of it.
+I've made sweeping changes throughout the different modules to achieve this goal, so I've compiled **JSPoker** into a single repository and made my changes on top of it.
 
 You can look at the history to get an idea of what I did, feel free to fork/improve/experiment with it.
 
